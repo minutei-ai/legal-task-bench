@@ -6,7 +6,7 @@ export const Expected = Schema.Struct({ id: Schema.NonEmptyString, value: Schema
 export const Citation = Schema.Struct({ documentId: Schema.NonEmptyString, quote: Schema.NonEmptyString });
 export const Answer = Schema.Struct({ id: Schema.NonEmptyString, value: Schema.NullOr(Schema.String), citations: Schema.Array(Citation) });
 export const Manifest = Schema.Struct({ name: Schema.NonEmptyString, version: Schema.NonEmptyString, description: Schema.NonEmptyString, language: Schema.NonEmptyString, synthetic: Schema.Boolean, status: Schema.NonEmptyString, legalReview: Schema.NonEmptyString, cases: Schema.Array(Schema.NonEmptyString) });
-export const AgentConfig = Schema.Struct({ caseId: Schema.NonEmptyString, model: Schema.NonEmptyString, harness: Schema.NonEmptyString, command: Schema.Array(Schema.NonEmptyString), output: Schema.NonEmptyString });
+export const AgentConfig = Schema.Struct({ caseId: Schema.NonEmptyString, model: Schema.NonEmptyString, harness: Schema.NonEmptyString, command: Schema.Array(Schema.NonEmptyString), output: Schema.NonEmptyString, timeoutMs: Schema.optional(Schema.Int.pipe(Schema.check(Schema.isGreaterThanOrEqualTo(1000), Schema.isLessThanOrEqualTo(3600000)))) });
 
 export const Deliverable = Schema.Struct({ id: Schema.NonEmptyString, title: Schema.NonEmptyString, minWords: Schema.Number });
 export const Rubric = Schema.Struct({ id: Schema.NonEmptyString, criterion: Schema.NonEmptyString, critical: Schema.Boolean });

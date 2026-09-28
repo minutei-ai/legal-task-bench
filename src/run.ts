@@ -22,12 +22,15 @@ const run = Effect.fn("benchmark.run")(function* () {
   const payload = { benchmark: manifest.name, model: config.model, harness: config.harness, caseId: data.id, request: data.request, questions: data.questions, deliverables: data.deliverables, documentsFile: join(directory, "documents.jsonl"), instruction: "Read documents using your native tools. Return JSON {caseId,answers:[{id,value,citations:[{documentId,quote}]}],artifacts:[{id,body}]}. Do not include review: review belongs to an independent reviewer." };
   const submission = yield* Effect.scoped(Effect.gen(function* () {
     const child = yield* Effect.acquireRelease(
-      Effect.sync(() => Bun.spawn([...config.command], { cwd: directory, stdin: new Blob([JSON.stringify(payload)]), stdout: "pipe", stderr: "inherit", timeout: 300000, killSignal: "SIGKILL" })),
+      Effect.sync(() => Bun.spawn([...config.command], { cwd: directory, stdin: new Blob([JSON.stringify(payload)]), stdout: "pipe", stderr: "inherit", timeout: config.timeoutMs ?? 300000, killSignal: "SIGKILL" })),
       (proc) => Effect.promise(async () => { proc.kill("SIGKILL"); await proc.exited; }),
     );
     const output = yield* Effect.tryPromise(() => new Response(child.stdout).text());
     const code = yield* Effect.promise(() => child.exited);
-    if (code !== 0) return yield* Effect.fail(`Adapter exited with status ${code}`);
+    if (code !== 0) {
+        console.error(output);
+        return yield* Effect.fail(`Adapter exited with status ${code}`);
+      }
     const result = yield* Schema.decodeUnknownEffect(Schema.fromJsonString(Submission))(output);
     if (result.review) return yield* Effect.fail("Agent cannot submit its own review");
     return result;

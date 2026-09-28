@@ -96,3 +96,15 @@ Forneça todos os critérios. A CLI valida completude, referência dos trechos e
 As referências legislativas nos casos são notas de trabalho autorais, não transcrições integrais. Fontes oficiais consultadas em 27/09/2026: [Código Civil](https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm), [CDC](https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm) e [CPC](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm). Não há jurisprudência fabricada. Se o experimento permitir pesquisa externa, registre data, fontes e ferramentas, pois isso muda as condições de comparação.
 
 Referência metodológica: [Harvey LAB](https://github.com/harveyai/harvey-labs), por avaliar tarefas jurídicas com entregas e rubricas. Os casos deste repositório foram escritos para esta suíte e não copiados do LAB.
+
+## Minutei local
+
+No checkout do Minutei com o adapter local, mantenha `bun run bench:serve` em outro terminal e execute:
+
+```sh
+bun run bench:run /caminho/legal-task-bench T01 /tmp/T01.json
+```
+
+O adapter usa login de desenvolvimento, um escritório isolado, documentos e notas reais, ferramentas e streaming do Capi. A inferência continua usando o provedor configurado do Minutei. Em memória, cada sessão usa uma conversa nova, sem reenvio do histórico. Consulte `docs/legal-benchmarks-local.md` no Minutei para configuração e limites.
+
+`AgentConfig.timeoutMs` define o limite por subprocesso, entre 1.000 e 3.600.000 ms; o padrão é 300.000 ms. O Minutei usa 1.800.000 ms para incluir uploads e inferência. Uma saída não zero preserva o diagnóstico do adapter em stderr.

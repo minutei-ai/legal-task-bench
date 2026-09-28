@@ -108,3 +108,8 @@ bun run bench:run /caminho/legal-task-bench T01 /tmp/T01.json
 O adapter usa login de desenvolvimento, um escritório isolado, documentos e notas reais, ferramentas e streaming do Capi. A inferência continua usando o provedor configurado do Minutei. Em memória, cada sessão usa uma conversa nova, sem reenvio do histórico. Consulte `docs/legal-benchmarks-local.md` no Minutei para configuração e limites.
 
 `AgentConfig.timeoutMs` define o limite por subprocesso, entre 1.000 e 3.600.000 ms; o padrão é 300.000 ms. O Minutei usa 1.800.000 ms para incluir uploads e inferência. Uma saída não zero preserva o diagnóstico do adapter em stderr.
+
+
+### Revisão 0.1.1
+
+T01 aceita o termo bilateral D04 como evidência direta das seis unidades faltantes; D01 continua permitido como apoio adicional. A rubrica crítica R3 exige fundamentação das consequências e consistência entre notificação e parecer. Isso continua dependendo de revisão independente: o avaliador determinístico não detecta sozinho argumentação jurídica sem suporte. Resultados 0.1.0 e 0.1.1 devem manter sua versão na comparação. O dataset PostHog deve ser publicado novamente após incorporar esta revisão.

@@ -70,3 +70,34 @@ test("complete factual submission plus bound review can pass", async () => {
   expect(evaluate(data, { ...submission, review }).passed).toBe(true);
   expect(evaluate(data, { ...submission, review }).status).toBe("passed_with_recorded_review");
 });
+
+
+test("T01 accepts direct bilateral evidence and rejects a supplier allegation", async () => {
+  const data = await loadCase("T01");
+  const direct = data.documents.find((document) => document.id === "D04");
+  if (!direct) return Promise.reject(new Error("Missing bilateral fixture"));
+  const supplier = data.documents.find((document) => document.id === "D03");
+  if (!supplier) return Promise.reject(new Error("Missing supplier fixture"));
+  const answer = { id: "pending_units", value: "6", citations: [{ documentId: direct.id, quote: direct.text }] };
+  expect(evaluate(data, { caseId: data.id, answers: [answer], artifacts: [] }).factChecks[0]?.passed).toBe(true);
+  expect(evaluate(data, { caseId: data.id, answers: [{ ...answer, citations: [{ documentId: supplier.id, quote: supplier.text }] }], artifacts: [] }).factChecks[0]?.passed).toBe(false);
+});
+
+test("T01 rejects unsupported inconsistent remedies despite correct facts and sufficient length", async () => {
+  const data = await loadCase("T01");
+  const base = {
+    caseId: data.id,
+    answers: data.expected.map((fact) => ({ id: fact.id, value: fact.value, citations: data.documents.filter((document) => fact.sources.includes(document.id)).map((document) => ({ documentId: document.id, quote: document.text })) })),
+    artifacts: data.deliverables.map((item) => ({ id: item.id, body: "Restituição em dobro sem fundamento demonstrado. ".repeat(item.minWords) })),
+  };
+  const review = { reviewer: "test-fixture-not-legal-review", submissionDigest: submissionDigest(base), criteria: data.rubric.map((criterion) => {
+    let score: 0 | 2 = 2;
+    if (criterion.id === "R3") score = 0;
+    return { id: criterion.id, score, reason: "Fixture de revisão: consequência sem suporte e incompatível com o parecer.", evidence: [{ artifactId: base.artifacts[0].id, quote: "Restituição em dobro sem fundamento demonstrado." }] };
+  }) };
+  const result = evaluate(data, { ...base, review });
+  expect(result.automaticPassed).toBe(true);
+  expect(result.reviewValid).toBe(true);
+  expect(result.reviewPassed).toBe(false);
+  expect(result.passed).toBe(false);
+});

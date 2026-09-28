@@ -57,10 +57,9 @@
       "id": "pending_units",
       "value": "6",
       "sources": [
-        "D01",
         "D04"
       ],
-      "rationale": "24 contratados menos 18 recebidos."
+      "rationale": "O termo bilateral declara expressamente que faltam seis unidades; contrato e termo também sustentam o cálculo."
     },
     {
       "id": "paid_cents",
@@ -112,7 +111,7 @@
     },
     {
       "id": "R3",
-      "criterion": "Distingue cumprimento, resolução e eventual indenização sem prometer resultado ou inventar prejuízo.",
+      "criterion": "Distingue cumprimento, resolução e eventual indenização sem prometer resultado ou inventar prejuízo; fundamenta as consequências propostas e mantém consistência entre notificação e parecer, sem introduzir restituição em dobro sem suporte demonstrado.",
       "critical": true
     },
     {
